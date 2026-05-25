@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ANIMADEX · Messages</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="admin-page">
+  <div class="bg-fx"></div>
+  <header class="admin-bar">
+    <h1 class="admin-title">ANIMA<b>DEX</b> · messages</h1>
+    <nav>
+      <a href="{{ url_for('pages.index') }}">← back to site</a>
+      <a href="{{ url_for('admin.logout') }}">log out</a>
+    </nav>
+  </header>
+  <main class="admin-shell">
+    {% if not messages %}
+      <p class="admin-empty">No messages yet.</p>
+    {% else %}
+      <p class="admin-count">
+        {{ messages|length }} message{{ '' if messages|length == 1 else 's' }}
+      </p>
+      {% for m in messages %}
+      <article class="admin-msg">
+        <header class="admin-msg-head">
+          <span class="admin-reason">
+            {{ reason_labels.get(m['reason'], m['reason']) }}
+          </span>
+          <span class="admin-meta">
+            #{{ m['id'] }} · {{ m['created_at'] }} UTC ·
+            {{ m['ip'] or 'unknown IP' }}
+          </span>
+          <form method="post"
+                action="{{ url_for('admin.delete', msg_id=m['id']) }}"
+                onsubmit="return confirm('Delete this message?');">
+            <button type="submit" class="admin-del">✕ Delete</button>
+          </form>
+        </header>
+        <pre class="admin-body">{{ m['message'] }}</pre>
+        {% if m['user_agent'] %}
+        <p class="admin-ua">{{ m['user_agent'] }}</p>
+        {% endif %}
+      </article>
+      {% endfor %}
+    {% endif %}
+  </main>
+</body>
+</html>

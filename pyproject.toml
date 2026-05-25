@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "animadex"
+version = "1.0.0"
+description = "Searchable anime character/artist gallery, self-hosted."
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.11"
+dependencies = [
+    "Flask>=3.0,<4.0",
+    "Pillow>=10.0",
+]
+
+[project.optional-dependencies]
+scoring = ["torch", "torchvision", "transformers"]
+generation = ["requests>=2.31"]
+
+[project.scripts]
+animadex = "animadex.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["animadex*"]
+
+[tool.setuptools.package-data]
+animadex = ["templates/*.html", "static/*", "schema.sql"]

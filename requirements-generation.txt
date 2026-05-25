@@ -1,0 +1,4 @@
+# Optional: image generation via a local ComfyUI instance.
+# Install with: pip install -r requirements-generation.txt
+# Then set [generation].workflow_file in config.toml.
+requests>=2.31

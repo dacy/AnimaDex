@@ -1,0 +1,49 @@
+# Local config and secrets
+config.toml
+.env
+
+# User data (kept outside the repo by default; see config.toml [paths])
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Sample data backups
+*.bak
+*.csv.bak
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+*.egg-info/
+.installed.cfg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Generated models cache (artist scorer)
+models/
+
+# Logs
+*.log
+ 
+ # Dont mind me
+.claude/

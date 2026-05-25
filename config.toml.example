@@ -1,0 +1,78 @@
+# AnimaDex configuration. Copy this file to `config.toml` and edit.
+# `config.toml` is gitignored so secrets stay local.
+#
+# Any value here can be overridden by an environment variable named
+# ANIMADEX_<SECTION>_<KEY> (upper case). e.g. ANIMADEX_SERVER_PORT=8080.
+
+[paths]
+# Where user data (the SQLite DB and image folders) lives.
+# Defaults to a sibling directory of the repo so your data stays out of git.
+# Relative paths are resolved relative to the repo root.
+# ${data_dir} can be referenced in the keys below.
+data_dir         = "../animadex-data"
+database         = "${data_dir}/animadex.db"
+characters_dir   = "${data_dir}/characters"
+artists_dir      = "${data_dir}/artists"
+copyrights_dir   = "${data_dir}/copyrights"
+
+[server]
+host        = "127.0.0.1"
+port        = 5000
+debug       = false
+# Required for signed sessions. Generate with `python -m animadex genkey`.
+secret_key  = ""
+# Set true ONLY if AnimaDex sits behind a reverse proxy (nginx/Caddy).
+# Then the X-Forwarded-For header is honoured for rate-limiting.
+trust_proxy = false
+
+[gallery]
+page_size     = 72            # 6 tiles per row x 12 rows
+thumb_height  = 445           # pixels; width scales proportionally
+thumb_quality = 82            # WebP quality (0-100)
+
+[cache]
+# All values are HTTP Cache-Control max-age in seconds.
+# Defaults below are tuned for LOCAL DEV (short / zero) so changes are
+# visible immediately. Self-hosters serving the public should raise
+# them -- e.g. landing 300, character 3600, api 60.
+landing_seconds   = 0
+character_seconds = 0
+api_seconds       = 0
+# Images get a long TTL because every URL is cache-busted with ?v=<mtime>
+# whenever the underlying file changes. Tweak only if you don't trust
+# upstream caches to honour Cache-Control.
+image_seconds = 604800
+thumb_seconds = 604800
+
+[admin]
+# /admin/login lets the configured user view and delete contact-form
+# messages. Leave password empty to disable admin entirely.
+username = "admin"
+password = ""
+
+[ratelimit]
+# Per-IP sliding-window rate limit. Format is "count/window-seconds".
+# Real users browsing the gallery hit ~15 requests in 2-3 s; scrapers
+# trip the burst window quickly. Set enabled=false during dev.
+enabled       = true
+burst         = "150/10"
+sustained     = "2000/300"
+block_seconds = 600
+
+[features]
+# Optional features. Each requires extra setup -- see docs/configuration.md.
+scoring_enabled = false       # needs `pip install -r requirements-scoring.txt`
+loras_enabled   = false       # needs internet; set civitai.api_key for higher rate limits
+contact_enabled = true
+
+[civitai]
+# Optional CivitAI API token, used by the LoRA sync. Anonymous works
+# but is rate-limited. Get one at https://civitai.com/user/account.
+api_key = ""
+
+[generation]
+# Configure ONLY if you want AnimaDex to (re)render images via ComfyUI.
+# Leaving workflow_file empty disables generation -- the pipeline still
+# runs DB + thumbnail + scoring steps for images you place by hand.
+comfyui_url   = "http://127.0.0.1:8188/"
+workflow_file = ""

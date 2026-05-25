@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ANIMADEX · Anima Character Index</title>
+  <link rel="icon"             href="{{ url_for('static', filename='favicon.ico') }}" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32"
+                              href="{{ url_for('static', filename='favicon-32x32.png') }}">
+  <link rel="icon" type="image/png" sizes="16x16"
+                              href="{{ url_for('static', filename='favicon-16x16.png') }}">
+  <link rel="apple-touch-icon" sizes="180x180"
+                              href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+  <link rel="manifest"         href="{{ url_for('static', filename='site.webmanifest') }}">
+  <meta name="theme-color" content="#07070e">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="bg-fx"></div>
+
+  <header class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-mark">✦</span>
+      <span class="brand-name">ANIMA<b>DEX</b></span>
+    </a>
+
+    <!-- Visible only on mobile; opens the sidebar as a slide-in drawer. -->
+    <button type="button" id="filters-toggle" class="filters-toggle"
+            aria-label="Open filters" aria-expanded="false"
+            aria-controls="sidebar">
+      <span class="ham" aria-hidden="true">☰</span>
+      <span>Filters</span>
+    </button>
+
+    <div class="navmenu" id="browsemenu">
+      <button class="navmenu-btn" type="button">
+        Browse by <span class="navcaret">▾</span></button>
+      <div class="navmenu-list">
+        <button type="button" data-browse="copyrights">Copyright</button>
+        <a href="/?mode=artists&amp;category=Webmaster+Curated">Webmaster Curated Artists</a>
+      </div>
+    </div>
+
+    <div class="modeswitch" id="modeswitch">
+      <button type="button" data-mode="characters" class="on">Characters</button>
+      <button type="button" data-mode="artists">Artists</button>
+    </div>
+
+    <div class="search">
+      <input id="q" type="search" autocomplete="off" spellcheck="false"
+             placeholder="Search…">
+      <button type="button" id="search-go" class="search-icon"
+              aria-label="Search">⌕</button>
+    </div>
+
+    <div class="sort" id="sort">
+      <button data-sort="count" class="on">Image Count</button>
+      <button data-sort="az">A–Z</button>
+      <button data-sort="score" hidden>Score</button>
+      <button data-sort="random" title="Click again to reshuffle">⚄ Random</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <button type="button" id="sidebar-close" class="sidebar-close"
+              aria-label="Close filters">×</button>
+      <div class="sidebar-title">Filters</div>
+      <div id="facets"></div>
+      <label class="fopt loras-filter" id="loras-filter" hidden>
+        <input type="checkbox" id="loras-only">
+        <span class="box"></span>
+        <span class="fl">LoRAs Available</span>
+        <button type="button" class="fhelp" id="lora-help-btn"
+                aria-label="About LoRA matching" aria-expanded="false"
+                aria-controls="lora-help-pop">?</button>
+      </label>
+    </aside>
+
+    <main class="main">
+      <div class="resultbar">
+        <span id="resultcount" class="rc">Loading…</span>
+        <div id="chips" class="activechips"></div>
+        <button id="clearall" class="clearall" hidden>Clear all ✕</button>
+      </div>
+
+      <div id="devbar" class="devbar" hidden>
+        <span class="dev-tag">DEV</span>
+        <span class="dev-cap">Tag with</span>
+        <select id="dev-cat" class="dev-sel"></select>
+        <button id="dev-del" type="button" class="dev-btn dev-x"
+                title="Delete the selected classification">✕</button>
+        <span class="dev-sep"></span>
+        <input id="dev-new" type="text" class="dev-input" maxlength="40"
+               placeholder="New classification name…">
+        <button id="dev-add" type="button" class="dev-btn">+ Add</button>
+        <span id="dev-hint" class="dev-hint"></span>
+      </div>
+
+      <div id="devbar-regen" class="devbar" hidden>
+        <span class="dev-tag">DEV</span>
+        <button id="regen-toggle" type="button" class="dev-toggle">
+          Regenerate mode</button>
+        <span class="dev-sep"></span>
+        <button id="lora-sync-btn" type="button" class="dev-btn">↻ Sync
+          LoRAs</button>
+        <span id="regen-hint" class="dev-hint"></span>
+      </div>
+
+      <div id="artist-note" class="disclaimer" hidden>
+        <b>Score</b> is a simple image-classification rating of each
+        artist's Anima-generated render — representative of that output
+        only, and not a direct or accurate measure of the artist's own
+        aesthetic quality.
+      </div>
+
+      <div id="gallery" class="gallery"></div>
+      <div id="status" class="status"></div>
+      <nav id="pager" class="pager" aria-label="Pagination"></nav>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <span class="site-mark">ANIMADEX</span>
+    <button type="button" id="contact-open" class="footer-link">
+      Contact</button>
+  </footer>
+
+  <!-- Floating help popup for the LoRAs filter. Lives at body level so
+       no overflow/clipping ancestor traps it behind the gallery tiles. -->
+  <div class="fhelp-pop" id="lora-help-pop" role="dialog"
+       aria-labelledby="lora-help-title" hidden>
+    <button type="button" class="fhelp-close" id="lora-help-close"
+            aria-label="Close">×</button>
+    <h3 id="lora-help-title">How LoRAs are matched</h3>
+    <p>Every 24 hours we sync the LoRAs from CivitAI that are tagged
+       <code>character</code> and built on the <b>Anima</b> base model,
+       then try to link each one to a character here.</p>
+    <p>Matching is word-set based: both the LoRA's title, tags and
+       trigger words and our character names are lower-cased,
+       accent-stripped and split into tokens. A LoRA is linked to a
+       character when the LoRA's tokens cover (or exactly equal) that
+       character's name tokens.</p>
+
+    <h4>Tips for LoRA creators</h4>
+    <ul>
+      <li>Tag the LoRA with <code>character</code> on CivitAI.</li>
+      <li>Use the <b>Anima</b> base model so the sync picks it up.</li>
+      <li>Put the danbooru-style name in the <b>title</b> or as a
+          <b>trigger word</b> &mdash; e.g.
+          <code>hatsune miku, vocaloid</code>.</li>
+      <li>For ambiguous names add the series in parentheses, e.g.
+          <code>Yuki (To-Love-Ru)</code>.</li>
+      <li>Short, clear titles match better than ones buried under long
+          stylistic prefixes.</li>
+    </ul>
+
+    <p class="fhelp-note"><b>Heads up:</b> matching is fuzzy &mdash; a
+       LoRA can sometimes end up linked to the wrong character,
+       especially for short common names ("Yuki", "Akari"). If you spot
+       a mismatch, please report it via the contact form in the footer.
+    </p>
+  </div>
+
+  <div id="modal" class="modal" hidden>
+    <div class="modal-bg" data-close></div>
+    <figure class="modal-box">
+      <button class="modal-close" data-close title="Close (Esc)">✕</button>
+      <div class="modal-stage">
+        <div class="spinner"></div>
+        <img id="modal-img" alt="">
+      </div>
+      <figcaption class="modal-cap">
+        <span id="modal-name" class="modal-name"></span>
+        <span id="modal-sub" class="modal-sub"></span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <div id="regen-modal" class="regen-ov" hidden>
+    <div class="regen-box">
+      <h3 id="regen-title" class="regen-title">Regenerate</h3>
+      <p class="regen-desc">Edit the prompt tags, then regenerate with a
+         fresh random seed. The current render is overwritten.</p>
+      <textarea id="regen-tags" class="regen-ta" rows="5"
+                spellcheck="false"></textarea>
+      <div id="regen-status" class="regen-status"></div>
+      <div class="regen-actions">
+        <button type="button" class="regen-btn" data-rclose>Cancel</button>
+        <button type="button" class="regen-btn primary" id="regen-go">
+          Regenerate</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="contact-modal" class="cmodal-ov" hidden>
+    <div class="cmodal-card">
+      <h3 class="cmodal-title">Send a message</h3>
+      <p class="cmodal-desc">For complaints, feedback or a LoRA takedown
+         request. No reply will be sent — your message is reviewed by an
+         admin.</p>
+      <form id="contact-form" class="cmodal-form">
+        <label>Reason
+          <select id="contact-reason" required>
+            <option value="" disabled selected>Pick a reason…</option>
+            <option value="lora_takedown">LoRA takedown request</option>
+            <option value="content">Content concern</option>
+            <option value="bug">Bug report</option>
+            <option value="feedback">Feedback / suggestion</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+        <p id="contact-hint" class="cmodal-hint" hidden></p>
+        <label>Message
+          <textarea id="contact-message" rows="6" required
+                    maxlength="5000"
+                    placeholder="What would you like to tell us?"></textarea>
+        </label>
+        <label class="captcha-row">
+          Are you human?
+          <span id="contact-question" class="captcha-q">…</span>
+          <input id="contact-answer" type="text" inputmode="numeric"
+                 autocomplete="off" required maxlength="6">
+        </label>
+        <input type="text" id="contact-honey" autocomplete="off"
+               tabindex="-1" aria-hidden="true" class="cmodal-honey">
+        <div id="contact-status" class="cmodal-status"></div>
+        <div class="cmodal-actions">
+          <button type="button" data-cclose class="cmodal-btn">Cancel</button>
+          <button type="submit" class="cmodal-btn primary">Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Backdrop behind the mobile sidebar drawer. -->
+  <div id="sidebar-backdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
+  <div id="lora-panel" class="lora-panel"></div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>window.ANIMADEX_DEV = {{ 'true' if dev else 'false' }};</script>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07070e">
+
+  <title>{{ c.name }} ({{ c.copyright_name }}) · ANIMADEX</title>
+  <meta name="description"
+        content="ANIMA AI render of {{ c.name }} from {{ c.copyright_name }}. Trigger: {{ c.trigger }}. Browse {{ count_fmt }} reference images and matched CivitAI LoRAs in the ANIMADEX catalogue.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="{{ site_origin }}/c/{{ c.character }}">
+
+  <meta property="og:type"        content="article">
+  <meta property="og:title"       content="{{ c.name }} ({{ c.copyright_name }}) · ANIMADEX">
+  <meta property="og:description" content="{{ c.name }} rendered with the ANIMA AI model. Tags: {{ tags_preview }}.">
+  <meta property="og:image"       content="{{ img_url }}">
+  <meta property="og:url"         content="{{ site_origin }}/c/{{ c.character }}">
+
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="{{ c.name }} ({{ c.copyright_name }})">
+  <meta name="twitter:description" content="{{ c.name }} rendered with the ANIMA AI model.">
+  <meta name="twitter:image"       content="{{ img_url }}">
+
+  <link rel="icon"             href="{{ url_for('static', filename='favicon.ico') }}" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32"
+                              href="{{ url_for('static', filename='favicon-32x32.png') }}">
+  <link rel="icon" type="image/png" sizes="16x16"
+                              href="{{ url_for('static', filename='favicon-16x16.png') }}">
+  <link rel="apple-touch-icon" sizes="180x180"
+                              href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+  <link rel="manifest"         href="{{ url_for('static', filename='site.webmanifest') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ImageObject",
+    "name": "{{ c.name }} ({{ c.copyright_name }})",
+    "description": "ANIMA AI render of {{ c.name }} from {{ c.copyright_name }}.",
+    "contentUrl": "{{ img_url }}",
+    "thumbnailUrl": "{{ thumb_url }}",
+    "url": "{{ site_origin }}/c/{{ c.character }}"
+  }
+  </script>
+</head>
+<body class="character-page">
+  <div class="bg-fx"></div>
+
+  <header class="topbar">
+    <a class="brand" href="/">
+      <span class="brand-mark">✦</span>
+      <span class="brand-name">ANIMA<b>DEX</b></span>
+    </a>
+    <a class="char-back" href="/?mode=characters">← All characters</a>
+  </header>
+
+  <main class="char-main">
+    <figure class="char-hero">
+      <img src="{{ img_url }}" alt="{{ c.name }} ({{ c.copyright_name }})"
+           width="512" height="768" loading="eager" decoding="async">
+    </figure>
+
+    <div class="char-info">
+      <h1 class="char-name">{{ c.name }}</h1>
+      <div class="char-meta">
+        <a class="char-series"
+           href="/?mode=characters&amp;copyright={{ c.copyright }}">{{ c.copyright_name }}</a>
+        <span class="char-count">{{ count_fmt }} reference images</span>
+      </div>
+
+      <section>
+        <h2>Trigger</h2>
+        <code class="char-trigger-code">{{ c.trigger }}</code>
+      </section>
+
+      <section>
+        <h2>Tags · {{ tag_count }}</h2>
+        <ul class="char-tag-list">
+        {% for tag in tags %}
+          <li class="tag">{{ tag }}</li>
+        {% endfor %}
+        </ul>
+      </section>
+
+      {% if loras %}
+      <section>
+        <h2>Available on CivitAI</h2>
+        <ul class="char-lora-list">
+        {% for lora in loras %}
+          <li><a href="{{ lora.url }}" target="_blank" rel="noopener">
+            {% if lora.thumb %}<img src="{{ lora.thumb }}" alt="" loading="lazy">{% endif %}
+            <span>{{ lora.name }}</span>
+          </a></li>
+        {% endfor %}
+        </ul>
+        <p class="char-lora-disclaim">ANIMADEX is not endorsed by CivitAI.</p>
+      </section>
+      {% endif %}
+
+      <div class="char-cta">
+        <a href="/?mode=characters&amp;character={{ c.character }}" class="char-cta-btn primary">
+          Open in gallery →
+        </a>
+        {% if c.url %}
+        <a href="{{ c.url }}" target="_blank" rel="noopener" class="char-cta-btn">
+          ↗ Danbooru source
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span class="site-mark">ANIMADEX</span>
+    <a href="/" class="footer-link">Home</a>
+  </footer>
+</body>
+</html>

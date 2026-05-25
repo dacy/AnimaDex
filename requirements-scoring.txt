@@ -1,0 +1,7 @@
+# Optional: artist quality scoring with the Muinez/artwork-scorer model.
+# Install with: pip install -r requirements-scoring.txt
+# Then set [features].scoring_enabled = true in config.toml.
+torch
+torchvision
+transformers
+Pillow>=10.0

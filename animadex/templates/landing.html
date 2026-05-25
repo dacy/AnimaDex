@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07070e">
+
+  <link rel="icon"             href="{{ url_for('static', filename='favicon.ico') }}" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32"
+                              href="{{ url_for('static', filename='favicon-32x32.png') }}">
+  <link rel="icon" type="image/png" sizes="16x16"
+                              href="{{ url_for('static', filename='favicon-16x16.png') }}">
+  <link rel="apple-touch-icon" sizes="180x180"
+                              href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+  <link rel="manifest"         href="{{ url_for('static', filename='site.webmanifest') }}">
+
+  <title>ANIMADEX — Anime character &amp; artist catalogue for the ANIMA AI model</title>
+  <meta name="description"
+        content="A catalogue of over {{ char_count }} anime characters and {{ artist_count }} artists rendered with the ANIMA AI model. Searchable by tags, copyright, hair colour, eye colour, gender and CivitAI LoRA availability.">
+  <meta name="keywords"
+        content="anime, AI, ANIMA model, character catalogue, danbooru, artist styles, LoRA, CivitAI, stable diffusion, character prompts">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="{{ request.url_root }}">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="ANIMADEX — Anime character &amp; artist catalogue">
+  <meta property="og:description"
+        content="Over {{ char_count }} characters and {{ artist_count }} artists, categorised and highly searchable.">
+  <meta property="og:url" content="{{ request.url_root }}">
+  <meta property="og:site_name" content="ANIMADEX">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="ANIMADEX — Anime character &amp; artist catalogue">
+  <meta name="twitter:description"
+        content="Over {{ char_count }} characters and {{ artist_count }} artists, categorised and highly searchable.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "ANIMADEX",
+    "alternateName": "Anima character & artist catalogue",
+    "url": "{{ request.url_root }}",
+    "description": "A catalogue of over {{ char_count }} anime characters and {{ artist_count }} artists rendered with the ANIMA AI model -- searchable by tags, copyright, traits and CivitAI LoRA availability.",
+    "inLanguage": "en"
+  }
+  </script>
+</head>
+<body class="landing-page">
+  <div class="bg-fx"></div>
+
+  <div class="collage" aria-hidden="true">
+    {% for img in collage %}
+    <img src="{{ img.url }}" alt="" loading="lazy" decoding="async"
+         style="top:{{ img.top }}%;left:{{ img.left }}%;
+                width:{{ img.w }}px;
+                opacity:{{ img.opacity }};
+                filter:blur({{ img.blur }}px) saturate(.85);
+                transform:rotate({{ img.rotate }}deg);">
+    {% endfor %}
+  </div>
+
+  <main class="land">
+    <a class="land-brand" href="/" aria-label="ANIMADEX home">
+      <span class="brand-mark" aria-hidden="true">✦</span>
+      <span class="brand-name">ANIMA<b>DEX</b></span>
+    </a>
+
+    <h1 class="land-title">
+      Expansive catalogue of <span class="grad-text">ANIMA AI</span>
+      character &amp; prompt samples
+    </h1>
+
+    <p class="land-sub">
+      Over {{ char_count }}
+      <a href="{{ url_for('pages.index') }}?mode=characters">characters</a>
+      and {{ artist_count }}
+      <a href="{{ url_for('pages.index') }}?mode=artists">artists</a>
+      categorized and highly searchable.
+    </p>
+
+    <nav class="land-cta" aria-label="Browse">
+      <a href="{{ url_for('pages.index') }}?mode=characters"
+         class="land-btn primary">Browse characters →</a>
+      <a href="{{ url_for('pages.index') }}?mode=artists"
+         class="land-btn">Browse artists →</a>
+    </nav>
+
+    <section class="land-feats" aria-label="Features">
+      <article class="feat">
+        <span class="feat-mark" aria-hidden="true">⌕</span>
+        <h2>Tag-rich search</h2>
+        <p>Every render keeps its full prompt and trigger tags. Search
+           by name, series, colour or any combination — comma-separated
+           for AND.</p>
+      </article>
+      <article class="feat">
+        <span class="feat-mark" aria-hidden="true">⛀</span>
+        <h2>Series &amp; filters</h2>
+        <p>Browse by series collage, or narrow by hair colour, hair
+           length, eye colour, gender and more.</p>
+      </article>
+      <article class="feat">
+        <span class="feat-mark" aria-hidden="true">★</span>
+        <h2>Artwork score</h2>
+        <p>Every artist is scored by an image-quality classifier so you
+           can sort by visual appeal at a glance.</p>
+      </article>
+      <article class="feat">
+        <span class="feat-mark" aria-hidden="true">⌬</span>
+        <h2>CivitAI LoRAs</h2>
+        <p>Characters with an ANIMA LoRA on CivitAI get a capsule —
+           hover the tile to preview the LoRAs available.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="land-foot">
+    <span class="site-mark">ANIMADEX</span>
+    <nav aria-label="Catalogue">
+      <a href="{{ url_for('pages.index') }}?mode=characters">Characters</a>
+      <a href="{{ url_for('pages.index') }}?mode=artists">Artists</a>
+      <a href="{{ url_for('pages.index') }}?mode=copyrights">Series</a>
+    </nav>
+  </footer>
+</body>
+</html>

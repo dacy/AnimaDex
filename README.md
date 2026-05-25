@@ -38,6 +38,11 @@ characters, ~10 artists, thumbnails only) into your configured
 `data_dir` so the gallery isn't empty. Bring your own CSV + images to
 fill it out -- see `docs/data-format.md`.
 
+To note, AnimaDex will in the near future make the current dataset available on the
+site at [animadex.net](https://animadex.net) downloadeable - please be patient.
+
+If you would like to generate your own images based on the same dataset, please note the site currently uses the Danbooru CSVs available on this [Huggingface Model - Laxhar/noob-wiki](https://huggingface.co/datasets/Laxhar/noob-wiki)
+
 ## Configuration
 
 One unified file: `config.toml`. The installer creates it from
